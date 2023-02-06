@@ -15,6 +15,7 @@ app.use(express.json());
 app.use(cors());
 // importing the userRouter
 import useRouter from "./src/router/UserRouter.js";
+import { ERROR } from "./src/constant.js";
 app.use("/api/v1/user", useRouter);
 
 // bad url endpoint handling
@@ -31,24 +32,14 @@ app.use((error, req, res, next) => {
   try {
     const statusCode = error.statusCode || 500;
     res.status(statusCode).json({
-      status: "error",
+      status: ERROR,
       message: error.message,
     });
-    if (
-      error.message.includes(
-        "E11000 duplicate key error collection: newlibrary.users index: email_1 dup key:"
-      )
-    ) {
-      res.status(400).json({
-        status: "error",
-        message: "The email address is already used",
-      });
-    }
   } catch (error) {
     console.log(error.message);
 
     res.json({
-      status: "error",
+      status: ERROR,
       message: error.message,
     });
   }

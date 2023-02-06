@@ -1,1 +1,32 @@
 deveo-p0er associate. ptssgyofmpty
+
+
+
+we will have three different tables for 
+
+user 
+books and trnasacation
+
+
+in try and catch 
+
+the catch is a function 
+
+learn more about try and catch
+
+try lets you execute a block of code and error can be generated while executing a code. catch catches these error
+
+when an error occurs javascrpit will normally stop and generate an error message.
+The technical term for this is javascript will throw an exception (throw an error)
+javascript actually creates an error objects with two properties name and message
+finally will execute a block of code reagardless of the try and catch 
+
+
+
+codes to run the mongo database in command listen
+
+mongosh
+
+also need to use the mongo cli to use the database
+
+also use the trello during coding

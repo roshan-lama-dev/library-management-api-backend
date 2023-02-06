@@ -51,6 +51,12 @@ router.post("/login", async (req, res, next) => {
       }
     }
   } catch (error) {
+    if (error.message.includes("E11000 duplicate key error collection")) {
+      return res.status(400).json({
+        status: "error",
+        message: "The email address is already used",
+      });
+    }
     next(error);
   }
 });
