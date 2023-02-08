@@ -42,8 +42,17 @@ router.post("/login", async (req, res, next) => {
         message: "Login Successful",
         result,
       });
+    } else {
+      return res.json({
+        status: "error",
+        message: "Please enter the valid login details",
+      });
     }
   } catch (error) {
+    res.json({
+      status: "error",
+      message: error.message,
+    });
     next(error);
   }
 });
