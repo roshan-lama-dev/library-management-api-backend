@@ -1,5 +1,9 @@
 import express from "express";
-import { addBooks, getBookByIsbn } from "../../model/bookModel/BookModel.js";
+import {
+  addBooks,
+  getAllbooks,
+  getBookByIsbn,
+} from "../../model/bookModel/BookModel.js";
 
 const router = express.Router();
 
@@ -31,6 +35,18 @@ router.post("/addbook", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/", async (req, res, next) => {
+  try {
+    const result = await getAllbooks();
+    return res.json({
+      result,
+    });
+    // console.log(result);
   } catch (error) {
     next(error);
   }

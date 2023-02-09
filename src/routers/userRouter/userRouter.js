@@ -22,7 +22,7 @@ router.post("/", async (req, res, next) => {
           status: "error",
           message: "Unable to create your account",
         });
-    console.log(result);
+    console.log("Result");
   } catch (error) {
     next(error);
   }
@@ -30,6 +30,7 @@ router.post("/", async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
   try {
+    console.log(req.body);
     const { email, password } = req.body;
     const result = await loginUser({ email });
     console.log(result);
@@ -49,10 +50,10 @@ router.post("/login", async (req, res, next) => {
       });
     }
   } catch (error) {
-    res.json({
-      status: "error",
-      message: error.message,
-    });
+    // res.json({
+    //   status: "error",
+    //   message: error.message + "hee;lp",
+    // });
     next(error);
   }
 });

@@ -20,7 +20,8 @@ app.use(morgan("dev"));
 import userRouter from "./src/routers/userRouter/userRouter.js";
 app.use("/api/v1/user", userRouter);
 import bookRouter from "./src/routers/bookRotuer/bookRouter.js";
-app.use("/api/v1/books", bookRouter);
+import { isAuth } from "./src/middlewares/authMiddleware.js";
+app.use("/api/v1/books", isAuth, bookRouter);
 app.use("*", (req, res, next) => {
   const error = {
     errorCode: 404,
