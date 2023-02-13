@@ -15,3 +15,22 @@ export const getBookByIsbn = (isbn) => {
 export const getAllbooks = () => {
   return BookSchema.find();
 };
+
+// find the specific book by id
+export const getBooksById = (_id) => {
+  return BookSchema.findById(_id);
+};
+
+// findbyIDandUpdate
+
+export const findBooksByIdAndUpdate = (_id, updateObj) => {
+  return BookSchema.findByIdAndUpdate(_id, updateObj, { new: true });
+};
+
+export const findBookAndDelete = (_id) => {
+  return BookSchema.findByIdAndDelete(_id);
+};
+
+export const getBorrowedBooks = (userId) => {
+  return BookSchema.find({ borrowedBy: { $in: [userId] } });
+};

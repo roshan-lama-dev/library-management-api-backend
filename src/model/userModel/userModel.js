@@ -8,3 +8,8 @@ export const registerUser = (userObject) => {
 export const loginUser = (filter) => {
   return UserSchema.findOne(filter);
 };
+
+// get user by id
+export const getUserById = (_id) => {
+  return UserSchema.findById(_id);
+};
