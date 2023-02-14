@@ -1,11 +1,14 @@
 import express from "express";
-import { createTransaction } from "../../model/Transaction/TransactionModel.js";
+import {
+  createTransaction,
+  getAllTransaction,
+} from "../../model/Transaction/TransactionModel.js";
 
 const router = express.Router();
 
 router.post("/", async (req, res, next) => {
   try {
-    const result = await createTransaction(req.body);
+    const result = await createTransaction(req.headers.authorization);
 
     result?._id
       ? res.json({
@@ -16,6 +19,16 @@ router.post("/", async (req, res, next) => {
           status: "error",
           message: "Cannot create the new transaction",
         });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/", async (req, res, next) => {
+  try {
+    const result = await getAllTransaction();
+    console.log(result);
+    return res.json(result);
   } catch (error) {
     next(error);
   }
