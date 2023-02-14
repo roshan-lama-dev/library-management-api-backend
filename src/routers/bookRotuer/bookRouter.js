@@ -8,6 +8,7 @@ import {
   getBooksById,
   getBorrowedBooks,
 } from "../../model/bookModel/BookModel.js";
+import { createTransaction } from "../../model/Transaction/TransactionModel.js";
 import { getUserById } from "../../model/userModel/userModel.js";
 
 const router = express.Router();
@@ -56,7 +57,8 @@ router.get("/borrowedBooks", async (req, res, next) => {
   try {
     const { authorization } = req.headers;
 
-    const borrowedBooks = await getBorrowedBooks(req.headers.userId);
+    const borrowedBooks = await getBorrowedBooks(authorization);
+    return res.json(borrowedBooks);
   } catch (error) {
     next(error);
   }
@@ -83,19 +85,45 @@ router.post("/borrow", async (req, res, next) => {
 
       // we do new true while updating the database so that we can get the new data instantly
       // we use push so that we can update
-      const updateBook = await findBooksByIdAndUpdate(bookId, {
-        $push: { borrowedBy: user._id },
+      // we also use pull so that we can remove the data from the database
+
+      // before updating the borrowed by field which contains the userId  we need to make sure that the transaction has been created./ the schema for the transaction contains the borrowedBy userid AND THE borrowed books details. The userId can be taken from headers and the book info can be taken from the getBookById where the bookId is taken from the body
+
+      const { isbn, title, thumbnail, author, year } = book;
+
+      const transaction = await createTransaction({
+        borrowedBy: {
+          userId: user?._id,
+          userName: user?.fName,
+        },
+        borrowedBooks: {
+          isbn,
+          title,
+          thumbnail,
+          author,
+          year,
+        },
       });
 
-      return updateBook?._id
-        ? res.json({
-            status: "success",
-            message: "You have borrowed this book",
-          })
-        : res.json({
-            status: "error",
-            message: "Something went wrong. Cannot borrow this book",
-          });
+      if (transaction?._id) {
+        const updateBook = await findBooksByIdAndUpdate(bookId, {
+          $push: { borrowedBy: user._id },
+        });
+
+        return updateBook?._id
+          ? res.json({
+              status: "success",
+              message: "You have borrowed this book",
+            })
+          : res.json({
+              status: "error",
+              message: "Something went wrong. Cannot borrow this book",
+            });
+      }
+      return res.json({
+        status: "error",
+        message: "cannot create the transaction",
+      });
     }
   } catch (error) {
     next(error);
@@ -106,6 +134,13 @@ router.post("/borrow", async (req, res, next) => {
 
 router.delete("/", async (req, res, next) => {
   try {
+    const book = await getBooksById(req.body.bookId);
+    if (book?.borrowedBy.length) {
+      return res.json({
+        status: "error",
+        message: "Unable to delete the book. Please return the book first",
+      });
+    }
     const result = await findBookAndDelete(req.body.bookId);
 
     result?._id
@@ -117,6 +152,33 @@ router.delete("/", async (req, res, next) => {
           status: "error",
           message: "Cannot delete the book",
         });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// return borrowed Books
+
+router.patch("/returnBooks", async (req, res, next) => {
+  try {
+    const book = await getBooksById(req.body.bookId);
+    const user = await getUserById(req.headers.authorization);
+
+    if (book?._id && user?._id) {
+      const updateBook = await findBooksByIdAndUpdate(book._id, {
+        $pull: { borrowedBy: user._id },
+      });
+
+      return updateBook?._id
+        ? res.json({
+            status: "success",
+            message: "The book has been returned",
+          })
+        : res.json({
+            status: "error",
+            message: "Cannot return the book",
+          });
+    }
   } catch (error) {
     next(error);
   }

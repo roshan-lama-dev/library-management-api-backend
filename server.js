@@ -21,6 +21,10 @@ import userRouter from "./src/routers/userRouter/userRouter.js";
 app.use("/api/v1/user", userRouter);
 import bookRouter from "./src/routers/bookRotuer/bookRouter.js";
 import { isAuth } from "./src/middlewares/authMiddleware.js";
+
+import transactionRouter from "./src/routers/transactionRouter/transactioRouter.js";
+
+app.use("/api/v1/transaction", isAuth, transactionRouter);
 app.use("/api/v1/books", isAuth, bookRouter);
 app.use("*", (req, res, next) => {
   const error = {
