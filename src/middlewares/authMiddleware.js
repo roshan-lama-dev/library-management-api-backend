@@ -6,6 +6,10 @@ export const isAuth = async (req, res, next) => {
     console.log(authorization);
 
     const user = authorization ? await loginUser({ _id: authorization }) : null;
+
+
+
+    
     console.log(user);
     user?._id
       ? next()

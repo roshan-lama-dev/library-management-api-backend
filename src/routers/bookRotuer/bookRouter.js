@@ -164,6 +164,7 @@ router.patch("/returnBooks", async (req, res, next) => {
     const book = await getBooksById(req.body.bookId);
     const user = await getUserById(req.headers.authorization);
 
+    const transaction = await getT;
     if (book?._id && user?._id) {
       const updateBook = await findBooksByIdAndUpdate(book._id, {
         $pull: { borrowedBy: user._id },
